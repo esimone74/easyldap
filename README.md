@@ -6,7 +6,7 @@ Demo
 
 	docker-compose up
 
-Open a browser to http://localhost
+Open a browser to http://localhost:5000
 
 	dc=example,dc=com
 	Username : admin
