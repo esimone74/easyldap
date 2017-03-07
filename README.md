@@ -2,6 +2,11 @@
 
 A dockerized LDAP server + basic web administration interface
 
+![Easy LDAP](/screenshot.png?raw=true "Easy LDAP")
+
+This is a work in progress! A lot of things don't work (TLS, editing security objects)
+It is also very limited in functionality, essentially hardcoded (best practice) paths for Posix users and groups.
+
 Demo
 
 	docker-compose up
