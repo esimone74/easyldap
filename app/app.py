@@ -227,7 +227,7 @@ def update_profile() :
 
 
 if __name__ == '__main__' :
-    app.secret_key = 'YtYpMlAfLabFiJsGsHnebXGpsxrNme3yKLqWqoVmqiefeAsfYV3Pyjn7UjRwRtg'
+    app.secret_key = 'YxYpMlAfLabFiJsGsHnebXGpsxrNme3yKLqWqoVmqiefeAsfYV3Pyjn7UjRwRtg'
     app.debug = True
     app.run(host="0.0.0.0", port=5000)
 
