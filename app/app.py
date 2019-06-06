@@ -202,7 +202,8 @@ def update_profile() :
     form_data = request.form
     data = {}
     re = [data.update({k:form_data.get(k)}) for k in form_data if k]
-    uid = str("%s%s" % (data.get('givenName')[0].lower(), data.get('sn').lower()))
+    uidold = str("%s%s" % (data.get('givenName')[0].lower(), data.get('sn').lower()))
+    uid = uidold.replace(" ", "")
     full_name = "%s %s" % (data.get('givenName'), data.get('sn'))
     initials = str('.'.join([x[0] for x in full_name.split()])+".")
     data = {str(k):str(v) for k,v in data.iteritems() if v}
