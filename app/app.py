@@ -6,7 +6,7 @@ import os, hashlib
 from ldap import modlist, schema
 
 app = Flask(__name__)
-ldap_server = "openldap"
+ldap_server = "ldap"
 
 def make_secret(password):
     salt = os.urandom(4)
@@ -139,23 +139,28 @@ def ous():
 
 @app.route('/groups', methods=['GET','POST'])
 def groups():
-
-    data = search(search_filter='objectClass=posixGroup')
+    groups = search(search_filter='objectClass=posixGroup')
+    orgs = search(search_filter='objectClass=organizationalUnit')
+    data = {
+        'groups' : groups,
+        'orgs' : orgs,
+    }
     base_dn = session['base_dn']
 
     if request.method == 'POST' :
         name = str(request.form.get('cn'))
         description = str(request.form.get('description'))
         gid_num = str(request.form.get('gidNumber'))
+        org_unit = str(request.form.get('orgUnit')) or "Groups"
         if not gid_num :
-            gid_num = str(len(data)+500)
+            gid_num = str(len(data.groups)+500)
         attrs = {
                 'cn' : name,
                 'description' : description,
                 'objectClass': ['posixGroup', 'top'],
                 'gidNumber':gid_num,
                 }
-        dn = "cn=%s,%s" % (name, base_dn)
+        dn = "cn=%s,ou=%s,%s" % (name, org_unit, base_dn)
         insert(dn, attrs)
         return redirect(request.referrer or url_for('index'))
 
@@ -203,7 +208,7 @@ def update_profile() :
     data = {}
     re = [data.update({k:form_data.get(k)}) for k in form_data if k]
     uidold = str("%s%s" % (data.get('givenName')[0].lower(), data.get('sn').lower()))
-    uid = uidold.replace(" ", "")
+    uid = str(request.form.get('userName')) or uidold.replace(" ", "")
     full_name = "%s %s" % (data.get('givenName'), data.get('sn'))
     initials = str('.'.join([x[0] for x in full_name.split()])+".")
     data = {str(k):str(v) for k,v in data.iteritems() if v}

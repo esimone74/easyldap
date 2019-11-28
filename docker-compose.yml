@@ -1,49 +1,30 @@
 version: '2'
 services:
-  openldap:
-    image: osixia/openldap:1.1.7
+  ldap:
+    image: osixia/openldap:1.2.2
     restart: always
-    container_name: openldap
+    env_file:
+      - ldap.env
     environment:
-      LDAP_LOG_LEVEL: "256"
-      LDAP_ORGANISATION: "example.com"
-      LDAP_DOMAIN: "example.com"
-      LDAP_BASE_DN: "dc=example,dc=com"
-      LDAP_ADMIN_PASSWORD: "admin"
-      LDAP_CONFIG_PASSWORD: "config"
-      LDAP_READONLY_USER: "true"
-      LDAP_READONLY_USER_USERNAME: "readonly"
-      LDAP_READONLY_USER_PASSWORD: "readonly"
-      LDAP_BACKEND: "hdb"
-      #LDAP_TLS: "false"
-      #LDAP_TLS_CRT_FILENAME: "cert.pem"
-      #LDAP_TLS_KEY_FILENAME: "privkey.pem"
-      #LDAP_TLS_CA_CRT_FILENAME: "ca.pem"
-      #LDAP_TLS_ENFORCE: "false"
-      #LDAP_TLS_CIPHER_SUITE: "SECURE256:-VERS-SSL3.0"
-      #LDAP_TLS_PROTOCOL_MIN: "3.1"
-      #LDAP_TLS_VERIFY_CLIENT: "demand"
-      #LDAP_SSL_HELPER_PREFIX: "ldap"
-      LDAP_REPLICATION: "false"
-      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
-    tty: true
-    stdin_open: true
+      - LDAP_ADMIN_PASSWORD=admin
+      - LDAP_CONFIG_PASSWORD=config
     volumes:
-      - "./config/ldap:/var/lib/ldap"
-      - "./config/ldap:/etc/ldap/slapd.d"
+      - ldap:/var/lib/ldap
+      - slapd.d:/etc/ldap/slapd.d
     ports:
-      - "389:389"
-      - "639:639"
-    hostname: "ldap"
+      - 389:389
+      - 639:639
 
   app:
-    restart: always
     build: .
-    container_name: app
+    restart: always
     volumes:
-    - "${PWD}/app:/app"
+      - ${PWD}/app:/easyldap/app:ro
     ports:
-      - "5000:5000"
+      - 5000:5000
     depends_on:
-      - openldap
+      - ldap
 
+volumes:
+  ldap:
+  slapd.d:
